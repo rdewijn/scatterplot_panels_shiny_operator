@@ -1,7 +1,7 @@
 {
-  "name": "Template Shiny Operator",
-  "description": "Template to create a Shiny operator in Tercen.",
-  "tags": ["template"],
+  "name": "Scatter plot operator",
+  "description": "Scatter plots.",
+  "tags": ["data visualisation"],
   "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/template_shiny_operator"]
+  "urls": ["https://github.com/tercen/scatterplot_shiny_operator"]
 }

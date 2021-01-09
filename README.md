@@ -1,19 +1,17 @@
-# Template Shiny operator for Tercen
+# Scatterplot Shiny operator for Tercen
 
 ##### Description
 
-The `Template Shiny operator` is a template repository for the creation of Shiny operators in Tercen.
+The `Scatterplot Shiny operator` is an operator to represent data as scatterplots in Tercen.
 
 ##### Usage
 
 Input projection|.
 ---|---
-`x-axis`        | type, description 
-`y-axis`        | type, description 
-`row`           | type, description 
-`column`        | type, description 
-`colors`        | type, description 
-`labels`        | type, description 
+`y-axis`        | numeric, measurement to represent 
+`row`           | factor (optional), groups corresponding to different plot panels
+`column`        | factor (optional), groups corresponding to different plot panels
+`colors`        | factor (optional), groups for corresponding to points coloring 
 
 Output relations|.
 ---|---
@@ -21,8 +19,8 @@ Output relations|.
 
 ##### Details
 
-Details on the computation.
+The operator takes all the values of a cell and represents a scatterplot. Depending on the assignment of rows, columns and colors in the Tercen projection, the layout will be different.
 
-##### See Also
+#### References
 
-[template_R_operator](https://github.com/tercen/template_R_operator)
+https://en.wikipedia.org/wiki/Scatter_plot
