@@ -2,9 +2,12 @@ library(shiny)
 library(tercen)
 library(dplyr)
 library(tidyr)
-library(ggplot2)
+library(shiny)
+library(tercen)
+library(tidyverse)
 library(ggrepel)
 library(ggsci)
+
 set.seed(42)
 
 ############################################
@@ -57,6 +60,12 @@ server <- shinyServer(function(input, output, session) {
 
     plt = ggplot(df, aes(x = .x, y = .y, colour = colors, label = labels)) +
       labs(x = input$xlab, y = input$ylab)
+    
+    if(all(is.numeric(df$colors))){
+      plt = plt + scale_colour_viridis_c()
+    } else {
+      plt = plt + scale_colour_jama()
+    }
 
     if(input$labs & !all(is.na(df$labels))) {
       plt <- plt + geom_point() + geom_text_repel()
