@@ -3,7 +3,7 @@ library(tercen)
 library(tidyverse)
 library(ggrepel)
 library(ggsci)
-library(viridis)
+
 set.seed(42)
 
 ############################################
