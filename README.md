@@ -2,7 +2,8 @@
 
 ##### Description
 
-The `Scatterplot Shiny operator` is an operator to represent data as scatterplots in Tercen.
+The `Scatterplot_panels_shiny_operator` is an operator to represent data as scatter plots or bubble plots in Tercen.
+It was created from `Scatterplot Shiny operator`.
 
 ##### Usage
 
@@ -19,7 +20,8 @@ Output relations|.
 
 ##### Details
 
-The operator takes all the values of a cell and represents a scatterplot. Depending on the assignment of rows, columns and colors in the Tercen projection, the layout will be different.
+The operator XY values in a cell and represents as scatterplot. Depending on the assignment of rows, columns and colors in the Tercen projection, the layout will be different.
+The input project `labels` is used to either create a plot with text labels or, if `labels` is numeric, map to point size and create a bubble plot.
 
 #### References
 
