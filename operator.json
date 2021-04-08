@@ -1,6 +1,6 @@
 {
-  "name": "Scatter plot operator",
-  "description": "Scatter plots.",
+  "name": "Scatter Panel Plots",
+  "description": "Scatter plots and bubble plots",
   "tags": ["data visualisation"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/scatterplot_shiny_operator"]
