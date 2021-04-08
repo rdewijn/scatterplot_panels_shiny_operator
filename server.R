@@ -1,9 +1,9 @@
 library(shiny)
 library(tercen)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+library(tidyverse)
 library(ggrepel)
+library(ggsci)
+
 set.seed(42)
 
 ############################################
@@ -21,7 +21,7 @@ getCtx <- function(session) {
 ####
 ############################################
 
-shinyServer(function(input, output, session) {
+server <- shinyServer(function(input, output, session) {
   
   dataInput <- reactive({
     getValues(session)
@@ -37,61 +37,69 @@ shinyServer(function(input, output, session) {
   
   output$main.plot <- renderPlot({
     
-    values <- dataInput()
+    df <- dataInput()
     
-    df <- values$data
-    in.col <- values$colors
-    in.lab <- values$labels
+    plt = ggplot(df, aes(x = .x, y = .y, colour = colors, label = labels)) +
+      labs(x = input$xlab, y = input$ylab)
     
-    input.par <- list(
-      xlab = input$xlab,
-      ylab = input$ylab,
-      labs = input$labs
-    )
+    if(all(is.numeric(df$colors))){
+      plt = plt + scale_colour_viridis_c()
+    } else {
+      plt = plt + scale_colour_jama()
+    }
     
-    fill.col <- NULL
-    if(length(unique(in.col)) > 0) fill.col <- as.factor(in.col)
-    labels <- NULL
-    if(length(unique(in.lab)) > 0) labels <- as.factor(in.lab)
+    if(input$labs & !all(is.na(df$labels))) {
+      plt <- plt + geom_point() + geom_text_repel()
+    }
+    else if(input$labs & !all(is.na(df$sizes))){
+      plt = plt + geom_point(aes(size = sizes))
+    }
+    else{
+      plt = plt + geom_point()
+    }
     
-    theme_set(theme_minimal())
-    print(labels)
-    plt <- ggplot(df, aes(x = .x, y = .y, fill = fill.col, label = labels)) + 
-      geom_point() + labs(x = input.par$xlab, y = input.par$ylab, fill = "Legend")
-    
-    if(input.par$labs) plt <- plt + geom_text_repel()
-    if(!is.null(df$cnames)) plt <- plt + facet_wrap(~ cnames + rnames)
-    
+    if (!input$wrap){
+      plt <- plt + facet_grid(rnames ~ cnames, scales = ifelse(input$fixed, "fixed", "free"))
+    } else {
+      plt = plt + facet_wrap(~ rnames + cnames, scales = ifelse(input$fixed, "fixed", "free"))
+    }
+    plt = plt + theme_bw()
     plt
-    
   })
   
 })
 
 getValues <- function(session){
-  
+  #browser()
   ctx <- getCtx(session)
-  
-  values <- list()
-  
-  values$data <- ctx %>% select(.x, .y, .ri, .ci) %>%
+  df <- ctx %>% select(.x, .y, .ri, .ci) %>%
     group_by(.ri)
   
-  values$colors <- NA
-  if(length(ctx$colors)) values$colors <- ctx$select(ctx$colors[[1]])[[1]]
+  colors <- 0
+  if(length(ctx$colors)) colors <- ctx$select(ctx$colors[[1]])[[1]]
+  if(!all(is.numeric(colors))) colors = as.factor(colors)
   
-  values$labels <- NA
-  if(length(ctx$labels)) values$labels <- as.character(ctx$select(ctx$labels[[1]])[[1]])  
+  labels <- NA
+  sizes = NA
+  if(length(ctx$labels)) tcn.labels <- ctx$select(ctx$labels[[1]])[[1]]
+  if (!all(is.numeric(tcn.labels))) {
+    labels = as.factor(tcn.labels)
+  } else {
+    sizes = tcn.labels
+  }
   
-  values$rnames <- ctx$rselect()[[1]]
-  names(values$rnames) <- seq_along(values$rnames) - 1
-  values$data$rnames <- values$rnames[as.character(values$data$.ri)]
   
-  if(nchar(values$rnames) == 0) values$data$rnames <- values$colors
+  df = df %>% data.frame(labels, colors, sizes)
   
-  values$cnames <- ctx$cselect()[[1]]
-  names(values$cnames) <- seq_along(values$cnames) - 1
-  values$data$cnames <- values$cnames[as.character(values$data$.ci)]
+  cnames = ctx$cselect()[[1]]
   
-  return(values)
+  rnames = ctx$rselect()[[1]]
+  df = df %>% 
+    mutate(colors = colors, labels = labels) %>%
+    left_join(data.frame(.ri = 0:(length(rnames)-1), rnames), by = ".ri") %>%
+    left_join(data.frame(.ci = 0:(length(cnames)-1), cnames), by = ".ci")
+  
+  return(df)
 }
+
+
