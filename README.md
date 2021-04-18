@@ -2,8 +2,8 @@
 
 ##### Description
 
-The `Scatterplot_panels_shiny_operator` is an operator to represent data as scatter plots or bubble plots in Tercen.
-It was created from `Scatterplot Shiny operator`.
+The `Scatterplot_shiny_operator` is an operator to represent data as scatter plots or bubble plots in Tercen.
+
 
 ##### Usage
 
